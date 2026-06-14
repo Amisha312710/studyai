@@ -1,4 +1,4 @@
-# StudyAI 🧠
+# StudyAI 
 
 > Your intelligent ML & NLP study companion — built for engineering students who want to actually understand, not just memorize.
 
@@ -152,12 +152,7 @@ Open `http://localhost:8080` 🚀
 - [ ] "Teach Me Like..." buttons — ELI5 / College / Interview / Math / Analogy
 - [ ] Confusion Detector — regenerate only the confusing section
 
-### V4 — Socratic Tutor
-- [ ] AI guides student to discover answers through questions
-- [ ] Adapts explanation depth based on responses
-- [ ] Talks WITH you, not AT you
-
-### V5 — Platform RAG Assistant
+### V4 — Platform RAG Assistant
 - [ ] Platform-wide AI assistant over your entire study history
 - [ ] Answers "What did I study last week?" or "Where am I weakest?"
 - [ ] Full RAG over uploaded notes, quiz history, and scheduler data
