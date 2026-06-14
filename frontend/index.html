@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StudyAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'DM Sans',sans-serif;background:#0f172a;color:#f8fafc;min-height:100vh}
+    h1,h2,h3,h4{font-family:'Syne',sans-serif}
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:#1e293b}
+    ::-webkit-scrollbar-thumb{background:#4f6ef7;border-radius:3px}
+    .app{display:flex;min-height:100vh}
+    .sidebar{width:260px;background:#1e293b;border-right:1px solid #334155;padding:24px;display:flex;flex-direction:column;position:fixed;height:100vh}
+    .main{flex:1;margin-left:260px;padding:32px;overflow-y:auto}
+    .logo{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#fff;margin-bottom:40px}
+    .logo span{color:#6b8cff}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;color:#94a3b8;font-size:14px;cursor:pointer;margin-bottom:4px;transition:all 0.2s;border:1px solid transparent}
+    .nav-item:hover{color:#fff;background:#ffffff10}
+    .nav-item.active{color:#6b8cff;background:#6b8cff20;border-color:#6b8cff40}
+    .sidebar-bottom{margin-top:auto;border-top:1px solid #334155;padding-top:16px}
+    .user-avatar{width:36px;height:36px;border-radius:50%;background:#6b8cff30;border:1px solid #6b8cff50;display:flex;align-items:center;justify-content:center;color:#6b8cff;font-weight:700;font-size:14px}
+    .user-info{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .reset-btn{width:100%;background:none;border:none;color:#64748b;font-size:12px;cursor:pointer;padding:6px;font-family:'DM Sans',sans-serif}
+    .reset-btn:hover{color:#f87171}
+    .card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+    .btn-primary{background:#4f6ef7;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s}
+    .btn-primary:hover{background:#3a56e8}
+    .btn-primary:disabled{opacity:0.5;cursor:not-allowed}
+    .btn-outline{background:none;border:1px solid #475569;color:#94a3b8;padding:10px 20px;border-radius:10px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+    .btn-outline:hover{border-color:#6b8cff;color:#fff}
+    .btn-ghost{background:none;border:none;color:#64748b;padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+    .btn-ghost:hover{color:#fff;background:#ffffff10}
+    .onboarding-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .onboarding-card{background:#1e293b;border:1px solid #334155;border-radius:20px;padding:36px;width:100%;max-width:480px;box-shadow:0 25px 50px #00000060}
+    .progress-steps{display:flex;gap:8px;margin-bottom:28px}
+    .step-bar{height:4px;flex:1;border-radius:99px;transition:background 0.4s}
+    .step-bar.done{background:#4f6ef7}
+    .step-bar.pending{background:#334155}
+    input[type=text],input[type=date],select{width:100%;background:#0f172a;border:1px solid #475569;border-radius:10px;padding:12px 16px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border 0.2s}
+    input[type=text]:focus,input[type=date]:focus,select:focus{border-color:#6b8cff}
+    input::placeholder{color:#64748b}
+    label{display:block;color:#cbd5e1;font-size:13px;font-weight:500;margin-bottom:6px}
+    .form-group{margin-bottom:16px}
+    .chip-row{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{padding:8px 14px;border-radius:8px;font-size:12px;font-weight:500;border:1px solid #475569;background:#0f172a;color:#94a3b8;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+    .chip.active{background:#4f6ef720;border-color:#6b8cff;color:#6b8cff}
+    .chip.weak.active{background:#ef444420;border-color:#f87171;color:#fca5a5}
+    .chip.grade.active{background:#4f6ef7;border-color:#4f6ef7;color:#fff}
+    .nav-btns{display:flex;justify-content:space-between;margin-top:24px}
+    .error-box{background:#ef444420;border:1px solid #ef444440;border-radius:8px;padding:10px 14px;color:#fca5a5;font-size:13px;margin-top:12px}
+    .countdown-blue{background:#4f6ef710;border-color:#4f6ef730;color:#6b8cff}
+    .countdown-red{background:#ef444410;border-color:#ef444430;color:#f87171}
+    .countdown-yellow{background:#eab30810;border-color:#eab30830;color:#fbbf24}
+    .countdown-num{font-family:'Syne',sans-serif;font-size:42px;font-weight:800;line-height:1}
+    .countdown-label{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;opacity:0.7;margin-bottom:4px}
+    .countdown-sub{font-size:13px;opacity:0.7;margin-top:2px}
+    .progress-bar-bg{width:100%;height:8px;background:#334155;border-radius:99px;overflow:hidden;margin-top:8px}
+    .progress-bar-fill{height:100%;border-radius:99px;transition:width 0.8s ease}
+    .strategy-box{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:16px;color:#cbd5e1;font-size:14px;line-height:1.7;white-space:pre-line;margin-top:12px}
+    .strategy-empty{border:1px dashed #334155;border-radius:12px;padding:32px;text-align:center;color:#475569;font-size:14px;margin-top:12px}
+    .strategy-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+    .dash-header{margin-bottom:28px}
+    .dash-header h2{font-size:28px;font-weight:700;color:#fff}
+    .dash-header p{color:#64748b;margin-top:4px;font-size:14px}
+    .streak-emoji{font-size:42px;text-align:center;margin:8px 0}
+    .streak-num{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:#fb923c;text-align:center}
+    .streak-sub{font-size:12px;color:#64748b;text-align:center;margin-top:4px}
+    .studio-layout{display:grid;grid-template-columns:260px 1fr;gap:24px;height:calc(100vh - 280px)}
+    .topic-sidebar{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:16px;overflow-y:auto}
+    .topic-search{width:100%;background:#0f172a;border:1px solid #475569;border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px}
+    .topic-search:focus{border-color:#6b8cff}
+    .topic-search::placeholder{color:#64748b}
+    .subject-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:#475569;margin:12px 0 6px}
+    .topic-btn{width:100%;text-align:left;background:none;border:none;color:#94a3b8;padding:8px 10px;border-radius:8px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:block;margin-bottom:2px}
+    .topic-btn:hover{color:#fff;background:#ffffff10}
+    .topic-btn.active{color:#6b8cff;background:#6b8cff15;font-weight:500}
+    .studio-content{display:flex;flex-direction:column;gap:16px;overflow-y:auto}
+    .mode-tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .mode-tab{padding:9px 18px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid #334155;background:#1e293b;color:#64748b;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+    .mode-tab:hover{border-color:#475569;color:#94a3b8}
+    .mode-tab.active{background:#4f6ef720;border-color:#6b8cff;color:#6b8cff}
+    .content-box{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:24px;flex:1;overflow-y:auto}
+    .content-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #334155}
+    .content-topic{font-size:20px;font-weight:700;color:#fff}
+    .content-mode-badge{padding:4px 12px;border-radius:99px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+    .badge-notes{background:#4f6ef720;color:#6b8cff;border:1px solid #4f6ef740}
+    .badge-flashcards{background:#a78bfa20;color:#a78bfa;border:1px solid #a78bfa40}
+    .badge-summary{background:#34d39920;color:#34d399;border:1px solid #34d39940}
+    .badge-explanation{background:#fb923c20;color:#fb923c;border:1px solid #fb923c40}
+    .notes-content{color:#cbd5e1;font-size:14px;line-height:1.8}
+    .notes-content h2{font-family:'Syne',sans-serif;font-size:17px;color:#fff;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid #334155}
+    .notes-content h2:first-child{margin-top:0}
+    .notes-content ul{padding-left:20px;margin:8px 0}
+    .notes-content li{margin-bottom:6px}
+    .notes-content strong{color:#e2e8f0}
+    .notes-content p{margin-bottom:10px}
+    .flashcard-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .flashcard{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:20px;cursor:pointer;transition:all 0.3s;min-height:140px;display:flex;flex-direction:column;justify-content:space-between}
+    .flashcard:hover{border-color:#4f6ef7;transform:translateY(-2px);box-shadow:0 8px 24px #4f6ef720}
+    .flashcard.flipped{background:#4f6ef715;border-color:#4f6ef750}
+    .flashcard-front{color:#94a3b8;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+    .flashcard-back-label{color:#6b8cff;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+    .flashcard-text{color:#e2e8f0;font-size:14px;line-height:1.6}
+    .flashcard-hint{color:#475569;font-size:11px;margin-top:8px}
+    .flashcard-counter{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .uploads-panel{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;margin-bottom:16px}
+    .upload-drop-zone{border:2px dashed #334155;border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative}
+    .upload-drop-zone:hover{border-color:#4f6ef7;background:#4f6ef708}
+    .upload-input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .uploaded-file{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#0f172a;border:1px solid #334155;border-radius:10px;margin-bottom:8px}
+    .file-info{display:flex;align-items:center;gap:10px}
+    .file-name{color:#e2e8f0;font-size:13px;font-weight:500}
+    .file-meta{color:#64748b;font-size:11px;margin-top:2px}
+    .file-delete{background:none;border:none;color:#475569;cursor:pointer;font-size:16px;padding:4px 8px;border-radius:6px;transition:all 0.2s}
+    .file-delete:hover{color:#f87171;background:#f8717115}
+    .notes-badge{display:inline-flex;align-items:center;gap:6px;background:#34d39920;border:1px solid #34d39940;color:#34d399;padding:4px 12px;border-radius:99px;font-size:11px;font-weight:600;margin-left:10px}
+    .upload-topic-select{width:100%;background:#0f172a;border:1px solid #475569;border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:10px}
+    .upload-topic-select:focus{border-color:#6b8cff}
+    .loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;gap:16px}
+    .spinner{width:36px;height:36px;border:3px solid #334155;border-top-color:#4f6ef7;border-radius:50%;animation:spin 0.8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-text{color:#64748b;font-size:14px;animation:pulse 1.5s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+    .screen{display:none}
+    .screen.active{display:block}
+    .hidden{display:none!important}
+    /* QUIZ */
+    .quiz-layout{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:start}
+    .quiz-config-panel{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;position:sticky;top:24px}
+    .quiz-config-panel h3{font-size:15px;font-weight:700;color:#fff;margin-bottom:16px}
+    .config-label{font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;margin-top:16px}
+    .config-label:first-of-type{margin-top:0}
+    .difficulty-row{display:flex;gap:6px}
+    .diff-btn{flex:1;padding:8px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#64748b;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;text-align:center}
+    .diff-btn:hover{border-color:#475569;color:#94a3b8}
+    .diff-btn.active.easy{background:#34d39920;border-color:#34d399;color:#34d399}
+    .diff-btn.active.medium{background:#fbbf2420;border-color:#fbbf24;color:#fbbf24}
+    .diff-btn.active.hard{background:#f8717120;border-color:#f87171;color:#f87171}
+    .qcount-row{display:flex;gap:6px;flex-wrap:wrap}
+    .qcount-btn{padding:6px 11px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#64748b;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+    .qcount-btn:hover{border-color:#475569;color:#94a3b8}
+    .qcount-btn.active{background:#4f6ef720;border-color:#6b8cff;color:#6b8cff}
+    .quiz-topic-search{width:100%;background:#0f172a;border:1px solid #475569;border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:10px}
+    .quiz-topic-search:focus{border-color:#6b8cff}
+    .quiz-topic-search::placeholder{color:#64748b}
+    .quiz-topic-list{max-height:220px;overflow-y:auto}
+    .quiz-topic-btn{width:100%;text-align:left;background:none;border:none;color:#94a3b8;padding:7px 10px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;display:block;margin-bottom:2px}
+    .quiz-topic-btn:hover{color:#fff;background:#ffffff10}
+    .quiz-topic-btn.active{color:#6b8cff;background:#6b8cff15;font-weight:600}
+    .quiz-main{min-height:400px}
+    .quiz-empty-state{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:60px;text-align:center}
+    .quiz-progress-wrap{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;margin-bottom:16px}
+    .quiz-meta-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .quiz-progress-bar{width:100%;height:6px;background:#334155;border-radius:99px;overflow:hidden}
+    .quiz-progress-fill{height:100%;background:linear-gradient(90deg,#4f6ef7,#a78bfa);border-radius:99px;transition:width .5s ease}
+    .quiz-timer{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:#fbbf24;min-width:44px;text-align:right}
+    .quiz-timer.urgent{color:#f87171;animation:timerPulse .5s ease-in-out infinite alternate}
+    @keyframes timerPulse{from{opacity:1}to{opacity:.4}}
+    .question-card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:28px;margin-bottom:16px;animation:qSlideIn .3s ease}
+    @keyframes qSlideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .q-number{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#4f6ef7;margin-bottom:10px}
+    .q-text{font-size:16px;font-weight:600;color:#f1f5f9;line-height:1.65;margin-bottom:22px}
+    .options-grid{display:flex;flex-direction:column;gap:10px}
+    .option-btn{width:100%;text-align:left;padding:13px 16px;border-radius:12px;border:1px solid #334155;background:#0f172a;color:#cbd5e1;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;display:flex;align-items:center;gap:12px}
+    .option-btn:hover:not([disabled]){border-color:#4f6ef7;background:#4f6ef710;color:#fff}
+    .option-btn[disabled]{cursor:default}
+    .option-key{width:28px;height:28px;border-radius:7px;background:#1e293b;border:1px solid #475569;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#64748b;flex-shrink:0;transition:all .2s}
+    .option-btn.selected .option-key{background:#4f6ef7;border-color:#4f6ef7;color:#fff}
+    .option-btn.selected{border-color:#4f6ef7;background:#4f6ef715;color:#fff}
+    .option-btn.correct{border-color:#34d399!important;background:#34d39915!important;color:#fff!important}
+    .option-btn.correct .option-key{background:#34d399!important;border-color:#34d399!important;color:#fff!important}
+    .option-btn.wrong{border-color:#f87171!important;background:#f8717115!important;color:#fff!important}
+    .option-btn.wrong .option-key{background:#f87171!important;border-color:#f87171!important;color:#fff!important}
+    .explanation-box{background:#0f172a;border:1px solid #4f6ef730;border-radius:12px;padding:16px;margin-top:16px;animation:qSlideIn .3s ease}
+    .exp-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4f6ef7;margin-bottom:8px}
+    .exp-text{color:#94a3b8;font-size:13px;line-height:1.7}
+    .quiz-nav-row{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+    .results-card{background:#1e293b;border:1px solid #334155;border-radius:20px;padding:32px;animation:qSlideIn .4s ease}
+    .score-ring-wrap{width:120px;height:120px;margin:0 auto 20px;position:relative}
+    .score-ring-wrap svg{position:absolute;inset:0;transform:rotate(-90deg)}
+    .score-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .score-pct{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:#fff}
+    .score-sub{font-size:10px;color:#64748b}
+    .results-grade{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;text-align:center;margin-bottom:4px}
+    .results-sub{color:#64748b;font-size:13px;text-align:center;margin-bottom:24px}
+    .results-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+    .stat-box{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:14px;text-align:center}
+    .stat-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:700}
+    .stat-lbl{font-size:11px;color:#64748b;margin-top:2px}
+    .review-section{border-top:1px solid #334155;padding-top:24px}
+    .review-section h3{font-size:15px;font-weight:700;color:#fff;margin-bottom:16px}
+    .review-item{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:16px;margin-bottom:10px}
+    .review-item.correct-r{border-color:#34d39930}
+    .review-item.wrong-r{border-color:#f8717130}
+    .review-q{font-size:13px;color:#e2e8f0;margin-bottom:8px;line-height:1.5}
+    .review-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+    .rtag{padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600}
+    .rtag-correct{background:#34d39920;color:#34d399;border:1px solid #34d39940}
+    .rtag-wrong{background:#f8717120;color:#f87171;border:1px solid #f8717140}
+    .rtag-answer{background:#4f6ef720;color:#6b8cff;border:1px solid #4f6ef740}
+    .review-exp{color:#64748b;font-size:12px;line-height:1.6}
+    .quiz-notes-badge{display:inline-flex;align-items:center;gap:6px;background:#34d39920;border:1px solid #34d39940;color:#34d399;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;margin-left:8px}
+    .sess-done{opacity:0.6;border-style:dashed!important}
+    /* SCHEDULER */
+    .sched-layout{display:flex;flex-direction:column;gap:20px}
+    .sched-controls{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+    .sched-week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+    .sched-day-col{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:12px;min-height:300px}
+    .sched-day-header{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-bottom:10px;text-align:center}
+    .sched-day-header .day-name{color:#fff;font-size:13px;font-weight:700;display:block;margin-bottom:2px}
+    .sched-session{border-radius:8px;padding:8px 10px;margin-bottom:8px;cursor:pointer;transition:all .2s;position:relative}
+    .sched-session:hover{transform:translateY(-1px);box-shadow:0 4px 12px #00000040}
+    .sched-session.ml{background:#4f6ef720;border:1px solid #4f6ef740}
+    .sched-session.nlp{background:#a78bfa20;border:1px solid #a78bfa40}
+    .sched-session.revision{background:#fbbf2420;border:1px solid #fbbf2440}
+    .sched-session.practice{background:#34d39920;border:1px solid #34d39940}
+    .sched-session.break{background:#47556920;border:1px solid #47556940}
+    .sess-topic{font-size:12px;font-weight:600;color:#e2e8f0;margin-bottom:3px}
+    .sess-meta{font-size:10px;color:#64748b;display:flex;align-items:center;gap:6px}
+    .sess-type-badge{padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase}
+    .badge-study{background:#4f6ef730;color:#6b8cff}
+    .badge-revision{background:#fbbf2430;color:#fbbf24}
+    .badge-practice{background:#34d39930;color:#34d399}
+    .badge-break{background:#47556930;color:#64748b}
+    .sess-delete{position:absolute;top:4px;right:4px;background:none;border:none;color:#475569;font-size:11px;cursor:pointer;opacity:0;transition:opacity .2s;padding:2px 4px;border-radius:4px}
+    .sched-session:hover .sess-delete{opacity:1}
+    .sess-delete:hover{color:#f87171;background:#f8717120}
+    .add-session-btn{width:100%;background:none;border:1px dashed #334155;border-radius:8px;color:#475569;font-size:11px;cursor:pointer;padding:6px;font-family:'DM Sans',sans-serif;transition:all .2s;margin-top:4px}
+    .add-session-btn:hover{border-color:#4f6ef7;color:#6b8cff}
+    .sched-empty{text-align:center;padding:60px 20px;background:#1e293b;border:1px solid #334155;border-radius:16px}
+    .sched-legend{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#64748b}
+    .legend-dot{width:8px;height:8px;border-radius:50%}
+    .sched-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+    .sched-stat{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:12px;text-align:center}
+    .sched-stat-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:#6b8cff}
+    .sched-stat-lbl{font-size:10px;color:#64748b;margin-top:2px}
+    /* Modal */
+    .modal-overlay{position:fixed;inset:0;background:#00000080;display:flex;align-items:center;justify-content:center;z-index:1000}
+    .modal-card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:24px;width:100%;max-width:380px}
+    .modal-card h3{font-size:16px;font-weight:700;color:#fff;margin-bottom:16px}
+    .modal-input{width:100%;background:#0f172a;border:1px solid #475569;border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:10px}
+    .modal-input:focus{border-color:#6b8cff}
+    .modal-select{width:100%;background:#0f172a;border:1px solid #475569;border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:10px}
+    .modal-row{display:flex;gap:8px;margin-bottom:10px}
+    .focus-chip{padding:6px 12px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#64748b;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+    .focus-chip.active{background:#4f6ef720;border-color:#6b8cff;color:#6b8cff}
+  </style>
+</head>
+<body>
+
+<div id="onboarding-screen" class="onboarding-wrap">
+  <div class="onboarding-card">
+    <div style="text-align:center;margin-bottom:24px">
+      <h1 style="font-size:32px;font-weight:800;color:#fff">Study<span style="color:#6b8cff">AI</span></h1>
+      <p style="color:#64748b;font-size:14px;margin-top:4px">Your intelligent study companion</p>
+    </div>
+    <div class="progress-steps">
+      <div class="step-bar done" id="bar1"></div>
+      <div class="step-bar pending" id="bar2"></div>
+      <div class="step-bar pending" id="bar3"></div>
+    </div>
+    <div id="step1">
+      <h2 style="font-size:22px;font-weight:700;color:#fff;margin-bottom:4px">Hey there! 👋</h2>
+      <p style="color:#64748b;font-size:13px;margin-bottom:20px">Tell us a bit about yourself</p>
+      <div class="form-group"><label>Your Name</label><input type="text" id="inp-name" placeholder="e.g. Aryan Sharma"/></div>
+      <div class="form-group"><label>University</label><input type="text" id="inp-uni" placeholder="e.g. IIT Delhi"/></div>
+      <div class="form-group">
+        <label>Semester</label>
+        <select id="inp-sem">
+          <option value="">Select semester</option>
+          <option>1st</option><option>2nd</option><option>3rd</option><option>4th</option>
+          <option>5th</option><option>6th</option><option>7th</option><option>8th</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Knowledge Level</label>
+        <div class="chip-row">
+          <button class="chip active" onclick="selectLevel(this,'beginner')">Beginner</button>
+          <button class="chip" onclick="selectLevel(this,'intermediate')">Intermediate</button>
+          <button class="chip" onclick="selectLevel(this,'advanced')">Advanced</button>
+        </div>
+      </div>
+      <div class="nav-btns"><div></div><button class="btn-primary" onclick="goStep(2)">Continue →</button></div>
+    </div>
+    <div id="step2" class="hidden">
+      <h2 style="font-size:22px;font-weight:700;color:#fff;margin-bottom:4px">Your Subjects 📚</h2>
+      <p style="color:#64748b;font-size:13px;margin-bottom:20px">Pick what you're studying</p>
+      <div class="form-group">
+        <label>Subjects</label>
+        <div class="chip-row">
+          <button class="chip" id="chip-ml" onclick="toggleSubject('ML')">🤖 Machine Learning</button>
+          <button class="chip" id="chip-nlp" onclick="toggleSubject('NLP')">💬 NLP</button>
+        </div>
+      </div>
+      <div class="form-group" id="weak-topics-section" style="display:none">
+        <label>Weak Topics <span style="color:#64748b">(select all that apply)</span></label>
+        <div class="chip-row" id="weak-topics-container" style="max-height:140px;overflow-y:auto"></div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-outline" onclick="goStep(1)">← Back</button>
+        <button class="btn-primary" onclick="goStep(3)">Continue →</button>
+      </div>
+    </div>
+    <div id="step3" class="hidden">
+      <h2 style="font-size:22px;font-weight:700;color:#fff;margin-bottom:4px">Set Your Goals 🎯</h2>
+      <p style="color:#64748b;font-size:13px;margin-bottom:20px">Help us build your perfect schedule</p>
+      <div id="exam-dates-container"></div>
+      <div class="form-group">
+        <label>Daily Study Hours — <span style="color:#6b8cff" id="hours-display">2 hours</span></label>
+        <input type="range" min="0.5" max="8" step="0.5" value="2" id="inp-hours"
+          oninput="document.getElementById('hours-display').textContent=this.value+' hours'"
+          style="accent-color:#6b8cff;width:100%"/>
+        <div style="display:flex;justify-content:space-between;color:#64748b;font-size:11px;margin-top:4px"><span>30 min</span><span>8 hours</span></div>
+      </div>
+      <div class="form-group">
+        <label>Target Grade</label>
+        <div class="chip-row">
+          <button class="chip grade" onclick="selectGrade(this,'A+')">A+</button>
+          <button class="chip grade active" onclick="selectGrade(this,'A')">A</button>
+          <button class="chip grade" onclick="selectGrade(this,'B+')">B+</button>
+          <button class="chip grade" onclick="selectGrade(this,'B')">B</button>
+          <button class="chip grade" onclick="selectGrade(this,'C')">C</button>
+        </div>
+      </div>
+      <div id="error-box" class="error-box hidden"></div>
+      <div class="nav-btns">
+        <button class="btn-outline" onclick="goStep(2)">← Back</button>
+        <button class="btn-primary" id="submit-btn" onclick="submitOnboarding()">Let's Study! 🚀</button>
+      </div>
+    </div>
+    <p style="text-align:center;color:#475569;font-size:12px;margin-top:16px" id="step-counter">Step 1 of 3</p>
+  </div>
+</div>
+
+<div id="app-screen" class="app hidden">
+  <aside class="sidebar">
+    <div class="logo">Study<span>AI</span></div>
+    <nav>
+      <div class="nav-item active" id="nav-dashboard" onclick="switchTab('dashboard')">⚡ Dashboard</div>
+      <div class="nav-item" id="nav-studio" onclick="switchTab('studio')">📖 Study Studio</div>
+      <div class="nav-item" id="nav-quiz" onclick="switchTab('quiz')">🧪 Quiz Mode</div>
+      <div class="nav-item" id="nav-schedule" onclick="switchTab('schedule')">📅 Scheduler</div>
+      <div class="nav-item" id="nav-tutor" onclick="switchTab('tutor')">🤖 AI Tutor</div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="user-info">
+        <div class="user-avatar" id="sidebar-avatar">S</div>
+        <div>
+          <div style="color:#fff;font-size:13px;font-weight:500" id="sidebar-name">Student</div>
+          <div style="color:#64748b;font-size:11px" id="sidebar-sem"></div>
+        </div>
+      </div>
+      <button class="reset-btn" onclick="resetApp()">Reset / Re-onboard</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard" class="screen active">
+      <div class="dash-header">
+        <h2 id="dash-greeting">Welcome back! 👋</h2>
+        <p>Here's your study snapshot for today.</p>
+      </div>
+      <div class="grid-2" id="countdown-row"></div>
+      <div class="grid-3">
+        <div class="card">
+          <p style="color:#cbd5e1;font-size:13px;font-weight:500;margin-bottom:8px">Daily Streak</p>
+          <div class="streak-emoji">🔥</div>
+          <div class="streak-num" id="streak-num">0</div>
+          <div class="streak-sub">days in a row</div>
+        </div>
+        <div class="card">
+          <p style="color:#cbd5e1;font-size:13px;font-weight:500;margin-bottom:8px">Daily Target</p>
+          <div style="text-align:center;padding:8px 0">
+            <span style="font-family:Syne,sans-serif;font-size:28px;font-weight:700;color:#6b8cff" id="hours-done">0</span>
+            <span style="color:#64748b;font-size:14px" id="hours-total"> / 2h</span>
+            <p style="color:#64748b;font-size:12px;margin-top:4px">hours studied today</p>
+          </div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" id="daily-bar" style="width:0%;background:#4f6ef7"></div></div>
+          <p style="color:#64748b;font-size:11px;text-align:right;margin-top:4px" id="daily-pct">0%</p>
+        </div>
+        <div class="card">
+          <p style="color:#cbd5e1;font-size:13px;font-weight:500;margin-bottom:12px">Topic Progress</p>
+          <div id="progress-bars"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:20px" id="today-sessions-card">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:18px">📅</span>
+      <h3 style="font-size:15px;font-weight:700;color:#fff">Today's Sessions</h3>
+    </div>
+    <button class="btn-ghost" onclick="switchTab('schedule')" style="font-size:12px;color:#6b8cff">View Full Schedule →</button>
+  </div>
+  <div id="today-sessions-list">
+    <div style="color:#475569;font-size:13px;text-align:center;padding:16px">No sessions scheduled for today. <span style="color:#6b8cff;cursor:pointer" onclick="switchTab('schedule')">Create one →</span></div>
+  </div>
+</div>
+      <div class="card" style="border-color:#4f6ef730">
+        <div class="strategy-header">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:20px">🧠</span>
+            <h3 style="font-size:16px;font-weight:700;color:#fff">Today's AI Strategy</h3>
+          </div>
+          <button class="btn-primary" id="strategy-btn" onclick="generateStrategy()">Generate</button>
+        </div>
+        <div id="strategy-content"><div class="strategy-empty">Click Generate to get your personalized study plan ✨</div></div>
+      </div>
+    </div>
+
+    <!-- STUDY STUDIO -->
+    <div id="tab-studio" class="screen">
+      <div class="dash-header">
+        <h2>Study Studio 📖</h2>
+        <p>Upload your notes, pick a topic, and learn.</p>
+      </div>
+      <div class="uploads-panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:18px">📎</span>
+            <h3 style="font-size:15px;font-weight:700;color:#fff">Your Course Material</h3>
+          </div>
+          <button class="btn-ghost" onclick="toggleUploadPanel()" id="upload-toggle-btn" style="font-size:12px;color:#6b8cff">+ Upload Notes</button>
+        </div>
+        <div id="upload-form" class="hidden">
+          <div style="margin-bottom:10px">
+            <label style="font-size:12px;margin-bottom:6px">Tag to topic (optional)</label>
+            <select class="upload-topic-select" id="upload-topic-select">
+              <option value="General">General (applies to all topics)</option>
+            </select>
+          </div>
+          <div class="upload-drop-zone">
+            <input type="file" class="upload-input" id="file-input" accept=".pdf,.txt" onchange="handleFileSelect(this)"/>
+            <div style="font-size:32px;margin-bottom:8px">📄</div>
+            <p style="color:#cbd5e1;font-size:14px;font-weight:500">Drop your PDF or TXT here</p>
+            <p style="color:#475569;font-size:12px;margin-top:4px">or click to browse</p>
+          </div>
+          <div id="upload-status" style="margin-top:10px"></div>
+        </div>
+        <div id="uploaded-files-list">
+          <div style="color:#475569;font-size:13px;text-align:center;padding:8px">No files uploaded yet!</div>
+        </div>
+      </div>
+      <div class="studio-layout">
+        <div class="topic-sidebar">
+          <input class="topic-search" type="text" placeholder="🔍 Search topics..." oninput="filterTopics(this.value)"/>
+          <div id="topic-list"><div style="color:#475569;font-size:13px;text-align:center;padding:20px">Loading topics...</div></div>
+        </div>
+        <div class="studio-content">
+          <div id="studio-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#475569;text-align:center;gap:12px">
+            <div style="font-size:52px">📖</div>
+            <h3 style="color:#64748b;font-size:18px">Select a topic to begin</h3>
+            <p style="font-size:13px;max-width:300px">Choose any topic from the left panel, then pick your study mode.</p>
+          </div>
+          <div id="studio-active" class="hidden">
+            <div class="card" style="padding:16px">
+              <div style="margin-bottom:12px;display:flex;align-items:center;flex-wrap:wrap;gap:6px">
+                <span style="color:#64748b;font-size:12px">Selected topic:</span>
+                <span style="color:#fff;font-size:14px;font-weight:600;margin-left:4px" id="selected-topic-name">—</span>
+                <span id="notes-indicator" class="notes-badge hidden">📎 Using your notes</span>
+              </div>
+              <div class="mode-tabs">
+                <button class="mode-tab active" id="tab-notes" onclick="selectMode('notes')">📝 Detailed Notes</button>
+                <button class="mode-tab" id="tab-flashcards" onclick="selectMode('flashcards')">🃏 Flashcards</button>
+                <button class="mode-tab" id="tab-summary" onclick="selectMode('summary')">⚡ Quick Summary</button>
+                <button class="mode-tab" id="tab-explanation" onclick="selectMode('explanation')">🔍 In-depth Explanation</button>
+              </div>
+              <div style="margin-top:12px">
+                <button class="btn-primary" onclick="generateContent()" id="generate-btn">Generate ✨</button>
+              </div>
+            </div>
+            <div class="content-box" id="content-output">
+              <div style="color:#475569;font-size:13px;text-align:center;padding:40px">Click "Generate" to create your study material 🚀</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="tab-quiz" class="screen">
+      <div class="dash-header">
+        <h2>Quiz Mode 🧪</h2>
+        <p>Test your knowledge with AI-generated adaptive quizzes</p>
+      </div>
+      <div class="quiz-layout">
+        <div class="quiz-config-panel">
+          <h3>Quiz Settings</h3>
+          <div class="config-label">Topic</div>
+          <input class="quiz-topic-search" type="text" placeholder="Search topics..." oninput="filterQuizTopics(this.value)" id="quiz-topic-search"/>
+          <div class="quiz-topic-list" id="quiz-topic-list"><div style="color:#475569;font-size:12px;padding:8px">Loading topics...</div></div>
+          <div class="config-label" style="margin-top:18px">Difficulty</div>
+          <div class="difficulty-row">
+            <button class="diff-btn easy" onclick="setDifficulty('easy',this)">Easy</button>
+            <button class="diff-btn medium active" onclick="setDifficulty('medium',this)">Medium</button>
+            <button class="diff-btn hard" onclick="setDifficulty('hard',this)">Hard</button>
+          </div>
+          <div class="config-label">Questions</div>
+          <div class="qcount-row">
+            <button class="qcount-btn" onclick="setQCount(3,this)">3</button>
+            <button class="qcount-btn active" onclick="setQCount(5,this)">5</button>
+            <button class="qcount-btn" onclick="setQCount(7,this)">7</button>
+            <button class="qcount-btn" onclick="setQCount(10,this)">10</button>
+          </div>
+          <button class="btn-primary" id="start-quiz-btn" onclick="startQuiz()" style="width:100%;margin-top:20px" disabled>Select a Topic</button>
+        </div>
+        <div class="quiz-main" id="quiz-main">
+          <div class="quiz-empty-state" id="quiz-empty">
+            <div style="font-size:56px;margin-bottom:16px">🧪</div>
+            <h3 style="color:#fff;font-size:20px;font-weight:700;margin-bottom:8px">Ready to test yourself?</h3>
+            <p style="color:#64748b;font-size:14px;max-width:320px;margin:0 auto">Pick a topic, set difficulty, and hit Start!</p>
+          </div>
+          <div class="quiz-empty-state hidden" id="quiz-loading">
+            <div class="loading-wrap" style="height:auto;padding:20px 0">
+              <div class="spinner"></div>
+              <div class="loading-text" id="quiz-loading-text">Generating quiz...</div>
+            </div>
+          </div>
+          <div id="quiz-active" class="hidden">
+            <div class="quiz-progress-wrap">
+              <div class="quiz-meta-row">
+                <div>
+                  <span style="color:#fff;font-size:14px;font-weight:600" id="quiz-q-indicator">Question 1 of 5</span>
+                  <span class="quiz-notes-badge hidden" id="quiz-notes-badge">📄 Using your notes</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span style="color:#64748b;font-size:12px" id="quiz-score-live">Score: 0</span>
+                  <div class="quiz-timer" id="quiz-timer">30</div>
+                </div>
+              </div>
+              <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-progress-fill" style="width:0%"></div></div>
+            </div>
+            <div id="question-area"></div>
+            <div class="quiz-nav-row">
+              <div id="quiz-result-hint" style="font-size:13px;color:#64748b"></div>
+              <button class="btn-primary hidden" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+            </div>
+          </div>
+          <div id="quiz-results" class="hidden">
+            <div class="results-card">
+              <div class="score-ring-wrap">
+                <svg viewBox="0 0 120 120" width="120" height="120">
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="#1e293b" stroke-width="10"/>
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="#4f6ef7" stroke-width="10"
+                    stroke-dasharray="314" stroke-dashoffset="314" id="score-ring-circle"
+                    stroke-linecap="round" style="transition:stroke-dashoffset 1.2s ease"/>
+                </svg>
+                <div class="score-center">
+                  <div class="score-pct" id="result-pct">0%</div>
+                  <div class="score-sub">SCORE</div>
+                </div>
+              </div>
+              <div class="results-grade" id="result-grade"></div>
+              <div class="results-sub" id="result-sub"></div>
+              <div class="results-stats">
+                <div class="stat-box"><div class="stat-num" style="color:#34d399" id="stat-correct">0</div><div class="stat-lbl">Correct</div></div>
+                <div class="stat-box"><div class="stat-num" style="color:#f87171" id="stat-wrong">0</div><div class="stat-lbl">Wrong</div></div>
+                <div class="stat-box"><div class="stat-num" style="color:#fbbf24" id="stat-time">0s</div><div class="stat-lbl">Avg Time</div></div>
+              </div>
+              <div style="display:flex;gap:10px;justify-content:center;margin-bottom:28px">
+                <button class="btn-primary" onclick="retakeQuiz()">↺ Retake Quiz</button>
+                <button class="btn-outline" onclick="newQuiz()">New Quiz</button>
+              </div>
+              <div class="review-section">
+                <h3>Answer Review</h3>
+                <div id="review-list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHEDULER -->
+    <div id="tab-schedule" class="screen">
+      <div class="dash-header">
+        <h2>Study Scheduler 📅</h2>
+        <p>AI-generated weekly plan — edit it to fit your day</p>
+      </div>
+      <div class="sched-layout">
+        <!-- Controls -->
+        <div class="card" style="padding:16px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div style="flex:1">
+              <p style="color:#cbd5e1;font-size:13px;font-weight:600;margin-bottom:8px">Focus Areas This Week</p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap" id="focus-chips"></div>
+            </div>
+            <div style="display:flex;gap:8px;flex-shrink:0">
+              <button class="btn-outline" onclick="clearSchedule()" id="clear-sched-btn" style="font-size:12px;padding:8px 14px">🗑 Clear</button>
+              <button class="btn-primary" onclick="generateSchedule()" id="gen-sched-btn">✨ Generate My Week</button>
+            </div>
+          </div>
+          <div id="sched-week-goal" class="hidden" style="margin-top:12px;padding:10px 14px;background:#4f6ef710;border:1px solid #4f6ef730;border-radius:8px;color:#94a3b8;font-size:13px"></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="sched-stats hidden" id="sched-stats">
+          <div class="sched-stat"><div class="sched-stat-num" id="stat-total-sessions">0</div><div class="sched-stat-lbl">Sessions</div></div>
+          <div class="sched-stat"><div class="sched-stat-num" id="stat-total-hours">0h</div><div class="sched-stat-lbl">Study Hours</div></div>
+          <div class="sched-stat"><div class="sched-stat-num" id="stat-topics-covered">0</div><div class="sched-stat-lbl">Topics</div></div>
+          <div class="sched-stat"><div class="sched-stat-num" id="stat-weak-sessions">0</div><div class="sched-stat-lbl">Weak Topic Sessions</div></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="sched-legend hidden" id="sched-legend">
+          <span style="color:#64748b;font-size:11px;font-weight:600">LEGEND:</span>
+          <div class="legend-item"><div class="legend-dot" style="background:#4f6ef7"></div>ML</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>NLP</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div>Revision</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div>Practice</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#475569"></div>Break</div>
+        </div>
+
+        <!-- Loading -->
+        <div class="hidden" id="sched-loading">
+          <div class="loading-wrap"><div class="spinner"></div><div class="loading-text">AI is building your perfect week...</div></div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="sched-empty" id="sched-empty">
+          <div style="font-size:52px;margin-bottom:16px">📅</div>
+          <h3 style="color:#fff;font-size:18px;font-weight:700;margin-bottom:8px">No schedule yet!</h3>
+          <p style="color:#64748b;font-size:13px;max-width:300px;margin:0 auto 16px">Pick your focus areas above and hit Generate — or build your own schedule manually!</p>
+          <button class="btn-outline" onclick="startManualSchedule()" style="font-size:13px">📝 Build Manually</button>
+        </div>
+
+        <!-- Week Grid -->
+        <div class="sched-week-grid hidden" id="sched-week-grid"></div>
+      </div>
+
+      <!-- Add Session Modal -->
+      <div class="modal-overlay hidden" id="add-session-modal">
+        <div class="modal-card">
+          <h3>Add Study Session</h3>
+          <input class="modal-input" type="text" id="modal-topic" placeholder="Topic name (e.g. Neural Networks)"/>
+          <select class="modal-select" id="modal-subject">
+            <option value="ML">🤖 Machine Learning</option>
+            <option value="NLP">💬 NLP</option>
+          </select>
+          <select class="modal-select" id="modal-type">
+            <option value="study">📚 Study</option>
+            <option value="revision">🔄 Revision</option>
+            <option value="practice">✍️ Practice</option>
+            <option value="break">☕ Break</option>
+          </select>
+          <div class="modal-row">
+            <select class="modal-select" id="modal-duration" style="margin-bottom:0">
+              <option value="30">30 min</option>
+              <option value="45">45 min</option>
+              <option value="60" selected>60 min</option>
+              <option value="90">90 min</option>
+              <option value="120">2 hours</option>
+            </select>
+          </div>
+          <input class="modal-input" type="text" id="modal-notes" placeholder="Notes (optional)"/>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn-outline" onclick="closeModal()" style="flex:1">Cancel</button>
+            <button class="btn-primary" onclick="confirmAddSession()" style="flex:1">Add Session</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- AI TUTOR -->
+    <div id="tab-tutor" class="screen">
+      <div class="dash-header">
+        <h2>AI Voice Tutor 🤖</h2>
+        <p>Bol ke poochho — AI bol ke samjhayega. Hindi ya English mein!</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;height:calc(100vh - 160px)">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card" style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px" id="tutor-messages">
+            <div style="text-align:center;padding:40px 20px">
+              <div style="font-size:48px;margin-bottom:12px">🤖</div>
+              <h3 style="color:#94a3b8;font-size:18px;margin-bottom:8px">AI Tutor Ready!</h3>
+              <p style="color:#475569;font-size:13px">Press mic and ask anything in English or Hindi.<br/>Say "Hindi mein samjhao" for Hindi responses!</p>
+            </div>
+          </div>
+          <div class="card" style="padding:16px">
+            <div id="voice-status" style="text-align:center;margin-bottom:12px;font-size:13px;color:#475569;min-height:20px"></div>
+            <div style="display:flex;gap:10px;align-items:flex-end">
+              <button id="mic-btn" onclick="toggleMic()"
+                style="width:48px;height:48px;border-radius:50%;border:2px solid #334155;background:#1e293b;color:#94a3b8;font-size:20px;cursor:pointer;transition:all 0.2s;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+                🎤
+              </button>
+              <textarea id="tutor-input" placeholder="Type your question or press mic to speak... (Hindi bhi chal sakta hai!)"
+                style="flex:1;background:#0f172a;border:1px solid #475569;border-radius:12px;padding:12px 16px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;resize:none;height:48px;line-height:1.5"
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
+                oninput="this.style.height='48px';this.style.height=this.scrollHeight+'px'">
+              </textarea>
+              <button onclick="sendMessage()" id="send-btn"
+                style="width:48px;height:48px;border-radius:12px;background:#4f6ef7;border:none;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;transition:background 0.2s">
+                ➤
+              </button>
+            </div>
+            <div style="text-align:center;margin-top:10px">
+              <button id="stop-audio-btn" onclick="stopAudio()" class="hidden"
+                style="background:#ef444420;border:1px solid #ef444440;color:#f87171;padding:6px 16px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif">
+                ⏹ Stop Speaking
+              </button>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <p style="color:#cbd5e1;font-size:13px;font-weight:600;margin-bottom:10px">📚 Topic Context</p>
+            <p style="color:#64748b;font-size:12px;margin-bottom:8px">Tag questions to a topic for better answers</p>
+            <select id="tutor-topic-select"
+              style="width:100%;background:#0f172a;border:1px solid #475569;border-radius:8px;padding:8px 12px;color:#fff;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
+              <option value="">No specific topic</option>
+            </select>
+          </div>
+          <div class="card">
+            <p style="color:#cbd5e1;font-size:13px;font-weight:600;margin-bottom:12px">📊 Session</p>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between">
+                <span style="color:#64748b;font-size:12px">Questions asked</span>
+                <span style="color:#6b8cff;font-size:12px;font-weight:600" id="questions-count">0</span>
+              </div>
+              <div style="display:flex;justify-content:space-between">
+                <span style="color:#64748b;font-size:12px">Topics covered</span>
+                <span style="color:#6b8cff;font-size:12px;font-weight:600" id="topics-count">0</span>
+              </div>
+            </div>
+            <button onclick="clearHistory()"
+              style="width:100%;margin-top:12px;background:none;border:1px solid #334155;color:#64748b;padding:8px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif">
+              🗑 Clear Conversation
+            </button>
+          </div>
+          <div class="card" style="background:#4f6ef710;border-color:#4f6ef730">
+            <p style="color:#6b8cff;font-size:13px;font-weight:600;margin-bottom:8px">💡 Tips</p>
+            <div style="color:#94a3b8;font-size:12px;line-height:1.8">
+              <p>🇬🇧 "Explain transformers" → English</p>
+              <p>🇮🇳 "Hindi mein samjhao" → Hindi</p>
+              <p>• Ask follow-up questions</p>
+              <p>• "Give an example" for examples</p>
+              <p>• Tag a topic for course-specific answers</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+
+<script>
+const BACKEND='http://localhost:3001';
+let state=JSON.parse(localStorage.getItem('studyai')||'{}');
+let allTopics={};
+let selectedTopic='';
+let selectedMode='notes';
+let uploadedFiles=[];
+let formData={name:'',university:'',semester:'',knowledgeLevel:'beginner',subjects:[],examDates:{},dailyHours:2,targetGrade:'A',weakTopics:[]};
+const ML_TOPICS_FE=['Linear Regression','Logistic Regression','Decision Trees','Random Forests','SVM','Neural Networks','Backpropagation','CNNs','RNNs','LSTMs','Clustering','K-Means','Dimensionality Reduction','PCA','Gradient Descent','Overfitting & Regularization','Bias-Variance Tradeoff','Ensemble Methods','Boosting','Bagging'];
+const NLP_TOPICS_FE=['Tokenization','Word Embeddings','Word2Vec','GloVe','TF-IDF','Transformers','Attention Mechanism','Self-Attention','BERT','GPT','Named Entity Recognition','Sentiment Analysis','Seq2Seq','Encoder-Decoder','Positional Encoding','Text Classification','Language Models','Fine-tuning'];
+
+window.onload=()=>{if(state.profile)showApp();};
+
+function goStep(n){
+  [1,2,3].forEach(i=>{document.getElementById(`step${i}`).classList.add('hidden');document.getElementById(`bar${i}`).className='step-bar '+(i<=n?'done':'pending');});
+  document.getElementById(`step${n}`).classList.remove('hidden');
+  document.getElementById('step-counter').textContent=`Step ${n} of 3`;
+  if(n===3)renderExamDateInputs();
+}
+function selectLevel(btn,level){document.querySelectorAll('#step1 .chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');formData.knowledgeLevel=level;}
+function selectGrade(btn,grade){document.querySelectorAll('.chip.grade').forEach(c=>c.classList.remove('active'));btn.classList.add('active');formData.targetGrade=grade;}
+function toggleSubject(subject){
+  const chip=document.getElementById(`chip-${subject.toLowerCase()}`);
+  if(formData.subjects.includes(subject)){formData.subjects=formData.subjects.filter(s=>s!==subject);chip.classList.remove('active');}
+  else{formData.subjects.push(subject);chip.classList.add('active');}
+  renderWeakTopics();
+}
+function renderWeakTopics(){
+  const section=document.getElementById('weak-topics-section');
+  const container=document.getElementById('weak-topics-container');
+  const topics=[...(formData.subjects.includes('ML')?ML_TOPICS_FE:[]),...(formData.subjects.includes('NLP')?NLP_TOPICS_FE:[])];
+  if(!topics.length){section.style.display='none';return;}
+  section.style.display='block';
+  container.innerHTML=topics.map(t=>`<button class="chip weak ${formData.weakTopics.includes(t)?'active':''}" onclick="toggleWeak(this,'${t}')">${t}</button>`).join('');
+}
+function toggleWeak(btn,topic){
+  if(formData.weakTopics.includes(topic)){formData.weakTopics=formData.weakTopics.filter(t=>t!==topic);btn.classList.remove('active');}
+  else{formData.weakTopics.push(topic);btn.classList.add('active');}
+}
+function renderExamDateInputs(){
+  document.getElementById('exam-dates-container').innerHTML=formData.subjects.map(s=>`<div class="form-group"><label>${s} Exam Date</label><input type="date" id="exam-${s}" onchange="formData.examDates['${s}']=this.value"/></div>`).join('');
+}
+async function submitOnboarding(){
+  formData.name=document.getElementById('inp-name').value.trim();
+  formData.university=document.getElementById('inp-uni').value.trim();
+  formData.semester=document.getElementById('inp-sem').value;
+  formData.dailyHours=parseFloat(document.getElementById('inp-hours').value);
+  if(!formData.name||!formData.subjects.length){showError('Please enter your name and select at least one subject.');return;}
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=true;btn.textContent='Setting up...';
+  try{
+    const res=await fetch(`${BACKEND}/api/onboarding/profile`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(formData)});
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.error);
+    state.profile=data.profile;localStorage.setItem('studyai',JSON.stringify(state));showApp();
+  }catch(e){showError('Cannot connect to backend. Is python3 server.py running?');btn.disabled=false;btn.textContent="Let's Study! 🚀";}
+}
+function showError(msg){const box=document.getElementById('error-box');box.textContent=msg;box.classList.remove('hidden');}
+
+function showApp(){
+  document.getElementById('onboarding-screen').classList.add('hidden');
+  document.getElementById('app-screen').classList.remove('hidden');
+  const p=state.profile;
+  document.getElementById('dash-greeting').textContent=`Welcome back, ${p.name.split(' ')[0]} 👋`;
+  document.getElementById('sidebar-name').textContent=p.name;
+  document.getElementById('sidebar-sem').textContent=p.semester+' Semester';
+  document.getElementById('sidebar-avatar').textContent=p.name[0].toUpperCase();
+ loadDashboard();loadTopics();loadUploadedFiles();initTutorTopics();initSchedulerFocusChips();loadSchedule();
+  if(state.strategy){document.getElementById('strategy-content').innerHTML=`<div class="strategy-box">${state.strategy}</div>`;document.getElementById('strategy-btn').textContent='↻ Refresh';}
+}
+function switchTab(tab){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  document.getElementById(`nav-${tab}`).classList.add('active');
+}
+
+// DASHBOARD
+async function loadDashboard(){
+  try{const res=await fetch(`${BACKEND}/api/dashboard`);const data=await res.json();state.dashboardData=data;localStorage.setItem('studyai',JSON.stringify(state));renderDashboard(data);}catch(e){console.error('Dashboard error:',e);}
+}
+function renderDashboard(data){
+  renderTodaySessions();
+  const row=document.getElementById('countdown-row');
+  row.innerHTML=Object.entries(data.examCountdowns||{}).map(([sub,days])=>{const cls=days<=7?'countdown-red':days<=14?'countdown-yellow':'countdown-blue';return `<div class="card ${cls}"><p class="countdown-label">${sub} Exam</p><p class="countdown-num">${days}</p><p class="countdown-sub">days remaining</p></div>`;}).join('');
+  document.getElementById('streak-num').textContent=data.streak||0;
+  const done=data.todayCompleted||0,target=data.dailyTarget||2;
+  const pct=Math.min(Math.round((done/target)*100),100);
+  document.getElementById('hours-done').textContent=done;document.getElementById('hours-total').textContent=` / ${target}h`;document.getElementById('daily-bar').style.width=pct+'%';document.getElementById('daily-pct').textContent=pct+'%';
+  const colors={ML:'#4f6ef7',NLP:'#a78bfa'};
+  document.getElementById('progress-bars').innerHTML=Object.entries(data.progress||{}).map(([sub,pct])=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:#cbd5e1;font-size:13px">${sub}</span><span style="color:${colors[sub]||'#6b8cff'};font-size:13px;font-weight:600">${pct}%</span></div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;background:${colors[sub]||'#6b8cff'}"></div></div></div>`).join('');
+}
+async function generateStrategy(){
+  const btn=document.getElementById('strategy-btn');btn.disabled=true;btn.textContent='Thinking...';
+  try{const res=await fetch(`${BACKEND}/api/dashboard/strategy`,{method:'POST'});const data=await res.json();state.strategy=data.strategy;localStorage.setItem('studyai',JSON.stringify(state));document.getElementById('strategy-content').innerHTML=`<div class="strategy-box">${data.strategy}</div>`;btn.textContent='↻ Refresh';}
+  catch(e){document.getElementById('strategy-content').innerHTML=`<div class="strategy-box" style="color:#f87171">Failed. Is backend running?</div>`;btn.textContent='Retry';}
+  finally{btn.disabled=false;}
+}
+
+// TOPICS
+async function loadTopics(){
+  try{const res=await fetch(`${BACKEND}/api/study/topics`);const data=await res.json();allTopics=data.topics;renderTopicList(allTopics);renderQuizTopicList(allTopics);}
+  catch(e){document.getElementById('topic-list').innerHTML=`<div style="color:#f87171;font-size:13px;padding:12px">Could not load topics.</div>`;}
+}
+function renderTopicList(topics){
+  let html='';
+  for(const [subject,topicList] of Object.entries(topics)){html+=`<div class="subject-label">${subject==='ML'?'🤖 Machine Learning':'💬 NLP'}</div>`;html+=topicList.map(t=>`<button class="topic-btn ${selectedTopic===t?'active':''}" onclick="selectTopic('${t.replace(/'/g,"\\'")}')">${t}</button>`).join('');}
+  document.getElementById('topic-list').innerHTML=html;
+}
+function filterTopics(query){
+  if(!query.trim()){renderTopicList(allTopics);return;}
+  const filtered={};
+  for(const [subject,topics] of Object.entries(allTopics)){const matched=topics.filter(t=>t.toLowerCase().includes(query.toLowerCase()));if(matched.length)filtered[subject]=matched;}
+  renderTopicList(filtered);
+}
+function selectTopic(topic){
+  selectedTopic=topic;
+  document.getElementById('studio-empty').classList.add('hidden');document.getElementById('studio-active').classList.remove('hidden');
+  document.getElementById('selected-topic-name').textContent=topic;document.getElementById('notes-indicator').classList.add('hidden');
+  document.getElementById('content-output').innerHTML=`<div style="color:#475569;font-size:13px;text-align:center;padding:40px">Click "Generate" to create your ${selectedMode} for <strong style="color:#6b8cff">${topic}</strong> 🚀</div>`;
+  renderTopicList(allTopics);
+}
+function selectMode(mode){selectedMode=mode;document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));document.getElementById(`tab-${mode}`).classList.add('active');}
+
+async function generateContent(){
+  if(!selectedTopic)return;
+  const btn=document.getElementById('generate-btn');btn.disabled=true;btn.textContent='Generating...';
+  document.getElementById('content-output').innerHTML=`<div class="loading-wrap"><div class="spinner"></div><div class="loading-text">Generating ${selectedMode} for ${selectedTopic}...</div></div>`;
+  try{
+    const res=await fetch(`${BACKEND}/api/study/generate`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:selectedTopic,mode:selectedMode})});
+    const data=await res.json();if(!res.ok)throw new Error(data.error);
+    const badge=document.getElementById('notes-indicator');data.used_uploaded_notes?badge.classList.remove('hidden'):badge.classList.add('hidden');
+    renderContent(data.content,data.mode,data.topic);
+  }catch(e){document.getElementById('content-output').innerHTML=`<div style="color:#f87171;padding:20px;font-size:14px">Failed to generate. Check backend and Groq key.</div>`;}
+  finally{btn.disabled=false;btn.textContent='Generate ✨';}
+}
+function renderContent(content,mode,topic){
+  const badges={notes:'badge-notes',flashcards:'badge-flashcards',summary:'badge-summary',explanation:'badge-explanation'};
+  const labels={notes:'📝 Notes',flashcards:'🃏 Flashcards',summary:'⚡ Summary',explanation:'🔍 Explanation'};
+  if(mode==='flashcards'){renderFlashcards(content,topic);return;}
+  document.getElementById('content-output').innerHTML=`<div class="content-header"><div class="content-topic">${topic}</div><span class="content-mode-badge ${badges[mode]}">${labels[mode]}</span></div><div class="notes-content">${formatMarkdown(content)}</div>`;
+}
+function renderFlashcards(content,topic){
+  let cards=[];
+  try{const clean=content.replace(/```json|```/g,'').trim();cards=JSON.parse(clean).flashcards||[];}
+  catch(e){document.getElementById('content-output').innerHTML=`<div style="color:#f87171;padding:20px">Could not parse flashcards. Try again.</div>`;return;}
+  document.getElementById('content-output').innerHTML=`<div class="content-header"><div class="content-topic">${topic}</div><span class="content-mode-badge badge-flashcards">🃏 Flashcards</span></div><div class="flashcard-counter"><span style="color:#64748b;font-size:13px">${cards.length} cards</span><button class="btn-ghost" onclick="flipAllCards(${cards.length})">Flip All</button></div><div class="flashcard-grid">${cards.map((c,i)=>`<div class="flashcard" id="fc-${i}" onclick="flipCard(${i})"><div><div class="flashcard-front" id="fc-label-${i}">Question</div><div class="flashcard-text" id="fc-text-${i}">${c.front}</div></div><div class="flashcard-hint" id="fc-hint-${i}">Tap to reveal answer</div></div>`).join('')}</div>`;
+  window._currentCards=cards;window._flippedState=new Array(cards.length).fill(false);
+}
+function flipCard(i){
+  const flipped=window._flippedState||[];const cards=window._currentCards||[];flipped[i]=!flipped[i];
+  const card=document.getElementById(`fc-${i}`);const text=document.getElementById(`fc-text-${i}`);const label=document.getElementById(`fc-label-${i}`);const hint=document.getElementById(`fc-hint-${i}`);
+  if(flipped[i]){card.classList.add('flipped');label.className='flashcard-back-label';label.textContent='Answer';text.textContent=cards[i].back;hint.textContent='Tap to see question';}
+  else{card.classList.remove('flipped');label.className='flashcard-front';label.textContent='Question';text.textContent=cards[i].front;hint.textContent='Tap to reveal answer';}
+}
+function flipAllCards(count){for(let i=0;i<count;i++)flipCard(i);}
+
+// UPLOADS
+async function loadUploadedFiles(){
+  try{const res=await fetch(`${BACKEND}/api/uploads/list`);const data=await res.json();uploadedFiles=data.uploads||[];renderUploadedFiles();populateUploadTopicSelect();}
+  catch(e){console.error('Could not load uploads:',e);}
+}
+function populateUploadTopicSelect(){
+  const sel=document.getElementById('upload-topic-select');
+  const allT=[...((state.profile?.subjects||[]).includes('ML')?ML_TOPICS_FE:[]),...((state.profile?.subjects||[]).includes('NLP')?NLP_TOPICS_FE:[])];
+  sel.innerHTML='<option value="General">General (applies to all topics)</option>';
+  allT.forEach(t=>{sel.innerHTML+=`<option value="${t}">${t}</option>`;});
+}
+function renderUploadedFiles(){
+  const container=document.getElementById('uploaded-files-list');
+  if(!uploadedFiles.length){container.innerHTML=`<div style="color:#475569;font-size:13px;text-align:center;padding:8px">No files uploaded yet!</div>`;return;}
+  container.innerHTML=uploadedFiles.map(f=>`<div class="uploaded-file"><div class="file-info"><div style="font-size:20px">📄</div><div><div class="file-name">${f.filename}</div><div class="file-meta">Topic: ${f.topic} · ${Math.round(f.char_count/1000)}k chars${f.was_trimmed?' · <span style="color:#fbbf24">Trimmed</span>':''}</div></div></div><button class="file-delete" onclick="deleteFile('${f.file_id}')">✕</button></div>`).join('');
+}
+function toggleUploadPanel(){const form=document.getElementById('upload-form');const btn=document.getElementById('upload-toggle-btn');const isHidden=form.classList.contains('hidden');form.classList.toggle('hidden');btn.textContent=isHidden?'✕ Close':'+ Upload Notes';}
+async function handleFileSelect(input){
+  const file=input.files[0];if(!file)return;
+  const topic=document.getElementById('upload-topic-select').value;
+  const subject=ML_TOPICS_FE.includes(topic)?'ML':NLP_TOPICS_FE.includes(topic)?'NLP':'General';
+  const statusDiv=document.getElementById('upload-status');
+  statusDiv.innerHTML=`<div style="color:#6b8cff;font-size:13px;display:flex;align-items:center;gap:8px"><div class="spinner" style="width:16px;height:16px;border-width:2px"></div> Uploading...</div>`;
+  const fd=new FormData();fd.append('file',file);fd.append('topic',topic);fd.append('subject',subject);
+  try{
+    const res=await fetch(`${BACKEND}/api/uploads/upload`,{method:'POST',body:fd});const data=await res.json();
+    if(!res.ok)throw new Error(data.error);
+    statusDiv.innerHTML=`<div style="color:#34d399;font-size:13px">✅ Uploaded! ${Math.round(data.char_count/1000)}k chars extracted${data.was_trimmed?' (trimmed)':''}</div>`;
+    await loadUploadedFiles();input.value='';
+    setTimeout(()=>{statusDiv.innerHTML='';toggleUploadPanel();},2500);
+  }catch(e){statusDiv.innerHTML=`<div style="color:#f87171;font-size:13px">❌ ${e.message||'Upload failed.'}</div>`;}
+}
+async function deleteFile(fileId){try{await fetch(`${BACKEND}/api/uploads/delete/${fileId}`,{method:'DELETE'});await loadUploadedFiles();}catch(e){console.error('Delete failed:',e);}}
+
+// MARKDOWN
+function formatMarkdown(text){
+  return text.replace(/^## (.+)$/gm,'<h2>$1</h2>').replace(/^### (.+)$/gm,'<h3 style="color:#e2e8f0;font-size:15px;margin:14px 0 6px">$1</h3>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/^- (.+)$/gm,'<li>$1</li>').replace(/(<li>.*<\/li>)/gs,'<ul>$1</ul>').replace(/^(\d+)\. (.+)$/gm,'<li>$2</li>').replace(/\n\n/g,'</p><p>').replace(/<\/ul>\s*<ul>/g,'');
+}
+function startManualSchedule() {
+  currentSchedule = {
+    week_goal: 'My custom study schedule',
+    days: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
+      .map(d => ({ day: d, date_label: '', sessions: [] }))
+  };
+  renderSchedule();
+}
+function renderTodaySessions() {
+  const container = document.getElementById('today-sessions-list');
+  if (!container) return;
+
+  // Get today's day name
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const todayName = days[new Date().getDay()];
+
+  // Load schedule from backend
+  fetch(`${BACKEND}/api/scheduler/get`)
+    .then(r => r.json())
+    .then(data => {
+      const schedule = data.schedule;
+      if (!schedule || !schedule.days) {
+        container.innerHTML = `<div style="color:#475569;font-size:13px;text-align:center;padding:16px">No schedule yet. <span style="color:#6b8cff;cursor:pointer" onclick="switchTab('schedule')">Create one →</span></div>`;
+        return;
+      }
+
+      const todayObj = schedule.days.find(d => d.day === todayName);
+      if (!todayObj || !todayObj.sessions || todayObj.sessions.length === 0) {
+        container.innerHTML = `<div style="color:#475569;font-size:13px;text-align:center;padding:16px">No sessions for ${todayName}. <span style="color:#6b8cff;cursor:pointer" onclick="switchTab('schedule')">Add one →</span></div>`;
+        return;
+      }
+
+      const sessions = todayObj.sessions;
+      const done = sessions.filter(s => s.done).length;
+      const total = sessions.length;
+      const pct = Math.round((done/total)*100);
+
+      container.innerHTML = `
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span style="color:#94a3b8;font-size:12px">${todayName} — ${done}/${total} completed</span>
+            <span style="color:#6b8cff;font-size:12px;font-weight:600">${pct}%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width:${pct}%;background:${pct===100?'#34d399':'#4f6ef7'}"></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          ${sessions.map(s => `
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0f172a;border:1px solid ${s.done?'#34d39940':'#334155'};border-radius:10px;transition:all .2s">
+              <div style="width:8px;height:8px;border-radius:50%;background:${s.subject==='ML'?'#4f6ef7':'#a78bfa'};flex-shrink:0"></div>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:500;color:${s.done?'#475569':'#e2e8f0'};text-decoration:${s.done?'line-through':''}">${s.topic}</div>
+                <div style="font-size:11px;color:#64748b">${s.type} · ${s.duration}min</div>
+              </div>
+              ${s.done
+                ? `<span style="color:#34d399;font-size:12px">✅</span>`
+                : `<button onclick="quickDone('${todayName}','${s.id}')" style="padding:3px 10px;border-radius:6px;border:1px solid #334155;background:none;color:#64748b;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">Done</button>`
+              }
+            </div>
+          `).join('')}
+        </div>
+      `;
+    })
+    .catch(() => {
+      container.innerHTML = `<div style="color:#475569;font-size:13px;text-align:center;padding:16px">Could not load schedule.</div>`;
+    });
+}
+
+function quickDone(day, sessionId) {
+  fetch(`${BACKEND}/api/scheduler/get`)
+    .then(r => r.json())
+    .then(data => {
+      const schedule = data.schedule;
+      if (!schedule) return;
+      const dayObj = schedule.days.find(d => d.day === day);
+      const sess = dayObj?.sessions.find(s => s.id === sessionId);
+      if (sess) {
+        sess.done = true;
+        // Save back
+        fetch(`${BACKEND}/api/scheduler/save`, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({schedule})
+        }).then(() => {
+          // Update local schedule too
+          if (currentSchedule) {
+            const d = currentSchedule.days.find(d => d.day === day);
+            const s = d?.sessions.find(s => s.id === sessionId);
+            if (s) s.done = true;
+          }
+          renderTodaySessions();
+        });
+      }
+    });
+}
+function toggleDone(day, sessionId) {
+  const dayObj = currentSchedule.days.find(d => d.day === day);
+  if (!dayObj) return;
+  const sess = dayObj.sessions.find(s => s.id === sessionId);
+  if (!sess) return;
+  sess.done = !sess.done;
+  renderSchedule();
+  saveSchedule();
+}
+
+function setReminder(day, sessionId, topic, duration) {
+  if (!('Notification' in window)) {
+    alert('Browser notifications not supported!');
+    return;
+  }
+
+  Notification.requestPermission().then(permission => {
+    if (permission !== 'granted') {
+      alert('Please allow notifications to set reminders.');
+      return;
+    }
+
+    // Ask what time
+    const time = prompt(`Set reminder for "${topic}"\nEnter time (e.g. 14:30 for 2:30 PM):`);
+    if (!time || !time.includes(':')) return;
+
+    const [hours, mins] = time.split(':').map(Number);
+    const now = new Date();
+    const reminderTime = new Date();
+    reminderTime.setHours(hours, mins, 0, 0);
+
+    const diff = reminderTime - now;
+    if (diff <= 0) {
+      alert('That time has already passed today!');
+      return;
+    }
+
+    // Save reminder on session
+    const dayObj = currentSchedule.days.find(d => d.day === day);
+    const sess = dayObj?.sessions.find(s => s.id === sessionId);
+    if (sess) { sess.reminder = time; renderSchedule(); saveSchedule(); }
+
+    // Schedule notification
+    setTimeout(() => {
+      new Notification(`📚 Study Time: ${topic}`, {
+        body: `Your ${duration}min session is starting now! Let's go 🚀`,
+        icon: '📖'
+      });
+    }, diff);
+
+    alert(`✅ Reminder set for ${topic} at ${time}!`);
+  });
+}
+function resetApp(){localStorage.removeItem('studyai');location.reload();}
+
+// QUIZ
+let quizState={topic:'',difficulty:'medium',numQuestions:5,questions:[],currentIndex:0,answers:[],timerInterval:null,timeLeft:30,timePerQ:30,quizStartTime:null,questionStartTime:null,usedNotes:false};
+function renderQuizTopicList(topics){
+  let html='';
+  for(const [subject,list] of Object.entries(topics)){html+=`<div class="subject-label" style="margin:10px 0 6px">${subject==='ML'?'🤖 ML':'💬 NLP'}</div>`;html+=list.map(t=>`<button class="quiz-topic-btn ${quizState.topic===t?'active':''}" onclick="selectQuizTopic('${t.replace(/'/g,"\\'")}')">${t}</button>`).join('');}
+  document.getElementById('quiz-topic-list').innerHTML=html||'<div style="color:#475569;font-size:12px;padding:8px">No topics found</div>';
+}
+function filterQuizTopics(query){
+  if(!query.trim()){renderQuizTopicList(allTopics);return;}
+  const filtered={};
+  for(const [subject,topics] of Object.entries(allTopics)){const matched=topics.filter(t=>t.toLowerCase().includes(query.toLowerCase()));if(matched.length)filtered[subject]=matched;}
+  renderQuizTopicList(filtered);
+}
+function selectQuizTopic(topic){
+  quizState.topic=topic;document.getElementById('quiz-topic-search').value='';renderQuizTopicList(allTopics);
+  const btn=document.getElementById('start-quiz-btn');btn.disabled=false;btn.textContent=`Start Quiz: ${topic} →`;
+}
+function setDifficulty(level,el){quizState.difficulty=level;document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function setQCount(n,el){quizState.numQuestions=n;quizState.timePerQ=n<=5?30:25;document.querySelectorAll('.qcount-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+async function startQuiz(){
+  if(!quizState.topic)return;
+  showQuizSection('loading');document.getElementById('quiz-loading-text').textContent=`Generating ${quizState.numQuestions} questions on ${quizState.topic}...`;
+  try{
+    const res=await fetch(`${BACKEND}/api/quiz/generate`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:quizState.topic,difficulty:quizState.difficulty,num_questions:quizState.numQuestions})});
+    const data=await res.json();if(!res.ok)throw new Error(data.error);
+    quizState.questions=data.quiz.questions;quizState.currentIndex=0;quizState.answers=[];quizState.usedNotes=data.used_uploaded_notes;quizState.quizStartTime=Date.now();
+    showQuizSection('active');renderQuestion();
+  }catch(e){showQuizSection('empty');alert('Failed to generate quiz: '+(e.message||'Check backend.'));}
+}
+function showQuizSection(which){['empty','loading','active','results'].forEach(id=>document.getElementById(`quiz-${id}`).classList.add('hidden'));document.getElementById(`quiz-${which}`).classList.remove('hidden');}
+function renderQuestion(){
+  const q=quizState.questions[quizState.currentIndex];const total=quizState.questions.length;const idx=quizState.currentIndex;
+  document.getElementById('quiz-q-indicator').textContent=`Question ${idx+1} of ${total}`;
+  document.getElementById('quiz-progress-fill').style.width=`${(idx/total)*100}%`;
+  document.getElementById('quiz-score-live').textContent=`Score: ${quizState.answers.filter(a=>a.correct).length}`;
+  document.getElementById('quiz-result-hint').textContent='';document.getElementById('next-btn').classList.add('hidden');
+  if(quizState.usedNotes)document.getElementById('quiz-notes-badge').classList.remove('hidden');
+  document.getElementById('question-area').innerHTML=`<div class="question-card"><div class="q-number">Question ${idx+1} · ${quizState.topic} · <span style="text-transform:capitalize">${quizState.difficulty}</span></div><div class="q-text">${q.question}</div><div class="options-grid">${['A','B','C','D'].map(k=>`<button class="option-btn" id="opt-${k}" onclick="selectAnswer('${k}')"><span class="option-key">${k}</span><span>${q.options[k]}</span></button>`).join('')}</div><div id="explanation-area"></div></div>`;
+  startTimer();quizState.questionStartTime=Date.now();
+}
+function startTimer(){clearTimer();quizState.timeLeft=quizState.timePerQ;updateTimerDisplay();quizState.timerInterval=setInterval(()=>{quizState.timeLeft--;updateTimerDisplay();if(quizState.timeLeft<=0){clearTimer();handleTimeout();}},1000);}
+function clearTimer(){if(quizState.timerInterval){clearInterval(quizState.timerInterval);quizState.timerInterval=null;}}
+function updateTimerDisplay(){const el=document.getElementById('quiz-timer');if(!el)return;el.textContent=quizState.timeLeft;quizState.timeLeft<=5?el.classList.add('urgent'):el.classList.remove('urgent');}
+function handleTimeout(){recordAnswer(null);showAnswerFeedback(null);}
+function selectAnswer(key){if(quizState.answers.length>quizState.currentIndex)return;clearTimer();recordAnswer(key);showAnswerFeedback(key);}
+function recordAnswer(key){const q=quizState.questions[quizState.currentIndex];const timeSpent=Math.round((Date.now()-quizState.questionStartTime)/1000);quizState.answers.push({chosen:key,correct:key===q.correct,timeSpent,question:q});}
+function showAnswerFeedback(chosen){
+  const q=quizState.questions[quizState.currentIndex];
+  ['A','B','C','D'].forEach(k=>{const btn=document.getElementById(`opt-${k}`);if(!btn)return;btn.setAttribute('disabled',true);if(k===q.correct)btn.classList.add('correct');else if(k===chosen&&k!==q.correct)btn.classList.add('wrong');if(k===chosen)btn.classList.add('selected');});
+  const expArea=document.getElementById('explanation-area');
+  if(expArea){const icon=chosen===q.correct?'✅':chosen===null?'⏱️':'❌';const msg=chosen===q.correct?'Correct!':chosen===null?"Time's up!":'Incorrect';expArea.innerHTML=`<div class="explanation-box"><div class="exp-label">${icon} ${msg}</div><div class="exp-text">${q.explanation}</div></div>`;}
+  const isLast=quizState.currentIndex>=quizState.questions.length-1;
+  const nextBtn=document.getElementById('next-btn');if(nextBtn){nextBtn.classList.remove('hidden');nextBtn.textContent=isLast?'See Results 🎉':'Next Question →';}
+  document.getElementById('quiz-score-live').textContent=`Score: ${quizState.answers.filter(a=>a.correct).length}`;
+  const hintEl=document.getElementById('quiz-result-hint');if(hintEl){hintEl.textContent=chosen===q.correct?`Correct answer: ${q.correct}`:`Correct answer was: ${q.correct} — ${q.options[q.correct]}`;hintEl.style.color=chosen===q.correct?'#34d399':'#f87171';}
+}
+function nextQuestion(){if(quizState.currentIndex>=quizState.questions.length-1){showResults();return;}quizState.currentIndex++;renderQuestion();}
+function showResults(){
+  clearTimer();showQuizSection('results');
+  const answers=quizState.answers;const total=answers.length;const correct=answers.filter(a=>a.correct).length;const pct=Math.round((correct/total)*100);const avgTime=Math.round(answers.reduce((s,a)=>s+a.timeSpent,0)/total);
+  setTimeout(()=>{const circle=document.getElementById('score-ring-circle');if(circle){circle.style.strokeDashoffset=314-((pct/100)*314);circle.style.stroke=pct>=80?'#34d399':pct>=60?'#fbbf24':'#f87171';}},100);
+  document.getElementById('result-pct').textContent=pct+'%';document.getElementById('stat-correct').textContent=correct;document.getElementById('stat-wrong').textContent=total-correct;document.getElementById('stat-time').textContent=avgTime+'s';
+  let grade,sub;
+  if(pct>=90){grade='Excellent! 🏆';sub='Outstanding!';document.getElementById('result-grade').style.color='#34d399';}
+  else if(pct>=75){grade='Great Job! ⭐';sub='Solid understanding!';document.getElementById('result-grade').style.color='#fbbf24';}
+  else if(pct>=60){grade='Good Effort 👍';sub='Review missed questions.';document.getElementById('result-grade').style.color='#60a5fa';}
+  else{grade='Keep Practicing 💪';sub='Go over the topic again!';document.getElementById('result-grade').style.color='#f87171';}
+  document.getElementById('result-grade').textContent=grade;document.getElementById('result-sub').textContent=sub+` (${correct}/${total} correct)`;
+  document.getElementById('review-list').innerHTML=answers.map((a,i)=>{const q=a.question;const isCorrect=a.correct;return `<div class="review-item ${isCorrect?'correct-r':'wrong-r'}"><div class="review-q">${i+1}. ${q.question}</div><div class="review-tags">${a.chosen?`<span class="rtag ${isCorrect?'rtag-correct':'rtag-wrong'}">${isCorrect?'✓':'✗'} You: ${a.chosen} — ${q.options[a.chosen]}</span>`:`<span class="rtag rtag-wrong">⏱ Timed out</span>`}${!isCorrect?`<span class="rtag rtag-answer">✓ ${q.correct} — ${q.options[q.correct]}</span>`:''}<span class="rtag" style="background:#ffffff08;color:#64748b;border:1px solid #334155">${a.timeSpent}s</span></div><div class="review-exp">${q.explanation}</div></div>`;}).join('');
+}
+function retakeQuiz(){quizState.currentIndex=0;quizState.answers=[];showQuizSection('active');renderQuestion();}
+function newQuiz(){clearTimer();showQuizSection('empty');quizState.topic='';quizState.questions=[];quizState.answers=[];const btn=document.getElementById('start-quiz-btn');btn.disabled=true;btn.textContent='Select a Topic';renderQuizTopicList(allTopics);}
+
+// AI TUTOR
+let mediaRecorder=null,audioChunks=[],isRecording=false,isSpeaking=false,currentAudio=null,questionsAsked=0,topicsCovered=new Set();
+
+function initTutorTopics(){
+  const sel=document.getElementById('tutor-topic-select');if(!sel)return;
+  const allT=[...((state.profile?.subjects||[]).includes('ML')?ML_TOPICS_FE:[]),...((state.profile?.subjects||[]).includes('NLP')?NLP_TOPICS_FE:[])];
+  sel.innerHTML='<option value="">No specific topic</option>';
+  allT.forEach(t=>{sel.innerHTML+=`<option value="${t}">${t}</option>`;});
+}
+async function toggleMic(){if(isRecording)stopRecording();else startRecording();}
+async function startRecording(){
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    mediaRecorder=new MediaRecorder(stream);audioChunks=[];
+    mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);
+    mediaRecorder.onstop=async()=>{const audioBlob=new Blob(audioChunks,{type:'audio/webm'});await transcribeAudio(audioBlob);stream.getTracks().forEach(t=>t.stop());};
+    mediaRecorder.start();isRecording=true;
+    const btn=document.getElementById('mic-btn');btn.style.background='#ef444420';btn.style.borderColor='#f87171';btn.style.color='#f87171';btn.textContent='⏹';
+    setVoiceStatus('🔴 Recording... Press again to stop');
+  }catch(e){setVoiceStatus('❌ Mic access denied.');}
+}
+function stopRecording(){
+  if(mediaRecorder&&isRecording){mediaRecorder.stop();isRecording=false;const btn=document.getElementById('mic-btn');btn.style.background='#1e293b';btn.style.borderColor='#334155';btn.style.color='#94a3b8';btn.textContent='🎤';setVoiceStatus('⏳ Transcribing...');}
+}
+async function transcribeAudio(audioBlob){
+  try{
+    const fd=new FormData();fd.append('audio',audioBlob,'recording.webm');
+    const res=await fetch(`${BACKEND}/api/tutor/transcribe`,{method:'POST',body:fd});
+    const data=await res.json();
+    if(data.text){document.getElementById('tutor-input').value=data.text;setVoiceStatus('✅ Transcribed! Sending...');setTimeout(()=>sendMessage(),500);}
+    else setVoiceStatus('❌ Could not transcribe. Try again.');
+  }catch(e){setVoiceStatus('❌ Transcription failed.');}
+}
+async function sendMessage(){
+  const input=document.getElementById('tutor-input');const message=input.value.trim();if(!message)return;
+  const topic=document.getElementById('tutor-topic-select')?.value||'';
+  addMessage('user',message);input.value='';input.style.height='48px';setVoiceStatus('');
+  questionsAsked++;document.getElementById('questions-count').textContent=questionsAsked;
+  if(topic){topicsCovered.add(topic);document.getElementById('topics-count').textContent=topicsCovered.size;}
+  const typingId=addTypingIndicator();
+  document.getElementById('send-btn').disabled=true;
+  try{
+    const res=await fetch(`${BACKEND}/api/tutor/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,topic})});
+    const data=await res.json();
+    removeTypingIndicator(typingId);
+    if(data.reply){
+  addMessage('assistant', data.reply, data.language);
+  speakText(data.reply, data.language);
+}
+  }catch(e){removeTypingIndicator(typingId);addMessage('error','Failed to get response. Is backend running?');}
+  finally{document.getElementById('send-btn').disabled=false;}
+}
+function addMessage(role,text,language='english'){
+  const container=document.getElementById('tutor-messages');
+  const emptyState=container.querySelector('div[style*="text-align:center"]');if(emptyState)emptyState.remove();
+  const div=document.createElement('div');div.style.cssText=`display:flex;gap:10px;align-items:flex-start;${role==='user'?'flex-direction:row-reverse':''}`;
+  const avatar=document.createElement('div');avatar.style.cssText=`width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;${role==='user'?'background:#4f6ef730;border:1px solid #4f6ef750':'background:#a78bfa30;border:1px solid #a78bfa50'}`;
+  avatar.textContent=role==='user'?(state.profile?.name?.[0]?.toUpperCase()||'U'):'🤖';
+  const bubble=document.createElement('div');bubble.style.cssText=`max-width:75%;padding:12px 16px;border-radius:16px;font-size:13px;line-height:1.6;${role==='user'?'background:#4f6ef720;border:1px solid #4f6ef740;color:#e2e8f0;border-top-right-radius:4px':role==='error'?'background:#ef444420;border:1px solid #ef444440;color:#fca5a5':'background:#1e293b;border:1px solid #334155;color:#cbd5e1;border-top-left-radius:4px'}`;
+  if(role==='assistant'){const badge=document.createElement('div');badge.style.cssText=`font-size:10px;font-weight:600;margin-bottom:6px;${language==='hindi'?'color:#fb923c':'color:#6b8cff'}`;badge.textContent=language==='hindi'?'🇮🇳 Hindi':'🇬🇧 English';bubble.appendChild(badge);}
+  const textNode=document.createElement('div');textNode.textContent=text;bubble.appendChild(textNode);
+  div.appendChild(avatar);div.appendChild(bubble);container.appendChild(div);container.scrollTop=container.scrollHeight;
+}
+function addTypingIndicator(){
+  const container=document.getElementById('tutor-messages');const id='typing-'+Date.now();const div=document.createElement('div');div.id=id;div.style.cssText='display:flex;gap:10px;align-items:center';
+  div.innerHTML=`<div style="width:32px;height:32px;border-radius:50%;background:#a78bfa30;border:1px solid #a78bfa50;display:flex;align-items:center;justify-content:center;font-size:14px">🤖</div><div style="background:#1e293b;border:1px solid #334155;padding:12px 16px;border-radius:16px;border-top-left-radius:4px"><div style="display:flex;gap:4px;align-items:center"><div style="width:6px;height:6px;background:#475569;border-radius:50%;animation:pulse 1s infinite"></div><div style="width:6px;height:6px;background:#475569;border-radius:50%;animation:pulse 1s infinite 0.2s"></div><div style="width:6px;height:6px;background:#475569;border-radius:50%;animation:pulse 1s infinite 0.4s"></div></div></div>`;
+  container.appendChild(div);container.scrollTop=container.scrollHeight;return id;
+}
+function removeTypingIndicator(id){const el=document.getElementById(id);if(el)el.remove();}
+function speakText(text, language='english'){
+  speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+
+  const voices = speechSynthesis.getVoices();
+
+  let selectedVoice = null;
+
+  // Hindi voice
+  if(language === 'hindi'){
+    selectedVoice =
+      voices.find(v => v.lang.includes('hi-IN')) ||
+      voices.find(v => v.name.toLowerCase().includes('hindi'));
+  }
+
+  // English realistic voices
+  if(!selectedVoice){
+    selectedVoice =
+      voices.find(v => v.name.includes('Google UK English Female')) ||
+      voices.find(v => v.name.includes('Microsoft Aria')) ||
+      voices.find(v => v.name.includes('Samantha')) ||
+      voices.find(v => v.name.includes('Google US English')) ||
+      voices[0];
+  }
+
+  utterance.voice = selectedVoice;
+  utterance.rate = 1;
+  utterance.pitch = 1;
+  utterance.volume = 1;
+
+  currentAudio = utterance;
+  isSpeaking = true;
+
+  document.getElementById('stop-audio-btn').classList.remove('hidden');
+  setVoiceStatus('🔊 AI is speaking.');
+
+  utterance.onend = () => {
+    isSpeaking = false;
+    currentAudio = null;
+    document.getElementById('stop-audio-btn').classList.add('hidden');
+    setVoiceStatus('');
+  };
+
+  speechSynthesis.speak(utterance);
+}
+
+// Load browser voices properly
+window.speechSynthesis.onvoiceschanged = () => {
+  speechSynthesis.getVoices();
+};
+function stopAudio(){
+  speechSynthesis.cancel();
+
+  if(currentAudio){
+    currentAudio = null;
+  }
+
+  isSpeaking = false;
+
+  document.getElementById('stop-audio-btn').classList.add('hidden');
+  setVoiceStatus('');
+}
+function setVoiceStatus(msg){const el=document.getElementById('voice-status');if(el)el.textContent=msg;}
+// SCHEDULER
+let currentSchedule = null;
+let addingToDay = null;
+let selectedFocusAreas = [];
+
+function initSchedulerFocusChips() {
+  const profile = state.profile;
+  if (!profile) return;
+  const allT = [
+    ...((profile.subjects||[]).includes('ML') ? ML_TOPICS_FE : []),
+    ...((profile.subjects||[]).includes('NLP') ? NLP_TOPICS_FE : [])
+  ];
+  // Show top weak topics + a few random ones
+  const weak = profile.weakTopics || [];
+  const others = allT.filter(t => !weak.includes(t)).slice(0, 6);
+  const chips = [...weak.slice(0, 6), ...others].slice(0, 10);
+  document.getElementById('focus-chips').innerHTML = chips.map(t =>
+    `<button class="focus-chip ${selectedFocusAreas.includes(t)?'active':''}" onclick="toggleFocusChip(this,'${t.replace(/'/g,"\\'")}'">${t}</button>`
+  ).join('');
+}
+
+function toggleFocusChip(el, topic) {
+  if (selectedFocusAreas.includes(topic)) {
+    selectedFocusAreas = selectedFocusAreas.filter(t => t !== topic);
+    el.classList.remove('active');
+  } else {
+    selectedFocusAreas.push(topic);
+    el.classList.add('active');
+  }
+}
+
+async function generateSchedule() {
+  const btn = document.getElementById('gen-sched-btn');
+  btn.disabled = true; btn.textContent = 'Generating...';
+  document.getElementById('sched-empty').classList.add('hidden');
+  document.getElementById('sched-week-grid').classList.add('hidden');
+  document.getElementById('sched-stats').classList.add('hidden');
+  document.getElementById('sched-legend').classList.add('hidden');
+  document.getElementById('sched-loading').classList.remove('hidden');
+
+  try {
+    const res = await fetch(`${BACKEND}/api/scheduler/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ focusAreas: selectedFocusAreas })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    currentSchedule = data.schedule;
+    renderSchedule();
+  } catch(e) {
+    document.getElementById('sched-loading').classList.add('hidden');
+    document.getElementById('sched-empty').classList.remove('hidden');
+    alert('Failed to generate schedule: ' + (e.message || 'Check backend'));
+  } finally {
+    btn.disabled = false; btn.textContent = '✨ Generate My Week';
+  }
+}
+
+function renderSchedule() {
+  if (!currentSchedule || !currentSchedule.days) return;
+  document.getElementById('sched-loading').classList.add('hidden');
+  document.getElementById('sched-empty').classList.add('hidden');
+  document.getElementById('sched-week-grid').classList.remove('hidden');
+  document.getElementById('sched-stats').classList.remove('hidden');
+  document.getElementById('sched-legend').classList.remove('hidden');
+
+  // Week goal
+  if (currentSchedule.week_goal) {
+    const goalEl = document.getElementById('sched-week-goal');
+    goalEl.textContent = '🎯 ' + currentSchedule.week_goal;
+    goalEl.classList.remove('hidden');
+  }
+
+  // Stats
+  const allSessions = currentSchedule.days.flatMap(d => d.sessions || []);
+  const totalMins = allSessions.reduce((s, sess) => s + (sess.duration || 0), 0);
+  const uniqueTopics = new Set(allSessions.map(s => s.topic)).size;
+  const weakTopics = state.profile?.weakTopics || [];
+  const weakSessions = allSessions.filter(s => weakTopics.includes(s.topic)).length;
+  document.getElementById('stat-total-sessions').textContent = allSessions.length;
+  document.getElementById('stat-total-hours').textContent = Math.round(totalMins / 60 * 10) / 10 + 'h';
+  document.getElementById('stat-topics-covered').textContent = uniqueTopics;
+  document.getElementById('stat-weak-sessions').textContent = weakSessions;
+
+  // Grid
+  const grid = document.getElementById('sched-week-grid');
+  grid.innerHTML = currentSchedule.days.map(day => `
+    <div class="sched-day-col">
+      <div class="sched-day-header">
+        <span class="day-name">${day.day}</span>
+        ${day.date_label || ''}
+      </div>
+      <div id="sessions-${day.day}">
+        ${(day.sessions || []).map(sess => renderSession(sess, day.day)).join('')}
+      </div>
+      <button class="add-session-btn" onclick="openAddModal('${day.day}')">+ Add</button>
+    </div>
+  `).join('');
+}
+
+function renderSession(sess, day) {
+  const subjectClass = sess.subject === 'ML' ? 'ml' : sess.subject === 'NLP' ? 'nlp' : sess.type === 'revision' ? 'revision' : sess.type === 'practice' ? 'practice' : 'break';
+  const badgeClass = `badge-${sess.type || 'study'}`;
+  const isWeak = (state.profile?.weakTopics || []).includes(sess.topic);
+  const isDone = sess.done || false;
+  return `
+    <div class="sched-session ${subjectClass} ${isDone?'sess-done':''}" id="sess-${sess.id}" title="${sess.notes || ''}">
+      <button class="sess-delete" onclick="deleteSession('${day}','${sess.id}')">✕</button>
+      <div class="sess-topic" style="${isDone?'text-decoration:line-through;opacity:0.5':''}">
+        ${isWeak ? '⚠️ ' : ''}${sess.topic}
+      </div>
+      <div class="sess-meta">
+        <span class="sess-type-badge ${badgeClass}">${sess.type || 'study'}</span>
+        <span>${sess.duration || 60}min</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button onclick="toggleDone('${day}','${sess.id}')"
+          style="flex:1;padding:4px 8px;border-radius:6px;border:1px solid ${isDone?'#34d399':'#334155'};background:${isDone?'#34d39920':'none'};color:${isDone?'#34d399':'#64748b'};font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s">
+          ${isDone?'✅ Done':'○ Mark Done'}
+        </button>
+        <button onclick="setReminder('${day}','${sess.id}','${sess.topic}',${sess.duration})"
+          style="padding:4px 8px;border-radius:6px;border:1px solid #334155;background:none;color:${sess.reminder?'#fbbf24':'#64748b'};font-size:12px;cursor:pointer;transition:all .2s"
+          title="Set reminder">
+          ${sess.reminder?'🔔':'🔕'}
+        </button>
+      </div>
+    </div>`;
+}
+
+function deleteSession(day, sessionId) {
+  if (!currentSchedule) return;
+  const dayObj = currentSchedule.days.find(d => d.day === day);
+  if (!dayObj) return;
+  dayObj.sessions = dayObj.sessions.filter(s => s.id !== sessionId);
+  renderSchedule();
+  saveSchedule();
+}
+
+function openAddModal(day) {
+  addingToDay = day;
+  document.getElementById('modal-topic').value = '';
+  document.getElementById('modal-notes').value = '';
+  document.getElementById('add-session-modal').classList.remove('hidden');
+
+  // Populate subject options based on profile
+  const subjects = state.profile?.subjects || ['ML', 'NLP'];
+  const sel = document.getElementById('modal-subject');
+  sel.innerHTML = subjects.map(s =>
+    `<option value="${s}">${s === 'ML' ? '🤖 Machine Learning' : '💬 NLP'}</option>`
+  ).join('');
+}
+
+function closeModal() {
+  document.getElementById('add-session-modal').classList.add('hidden');
+  addingToDay = null;
+}
+
+function confirmAddSession() {
+  const topic = document.getElementById('modal-topic').value.trim();
+  if (!topic) { alert('Please enter a topic name'); return; }
+
+  const subject = document.getElementById('modal-subject').value;
+  const type = document.getElementById('modal-type').value;
+  const duration = parseInt(document.getElementById('modal-duration').value);
+  const notes = document.getElementById('modal-notes').value.trim();
+
+  if (!currentSchedule) {
+    // Create empty schedule if none exists
+    currentSchedule = {
+      week_goal: 'Custom study schedule',
+      days: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(d => ({ day: d, date_label: '', sessions: [] }))
+    };
+  }
+
+  const dayObj = currentSchedule.days.find(d => d.day === addingToDay);
+  if (!dayObj) return;
+
+  dayObj.sessions.push({
+    id: addingToDay.toLowerCase().slice(0,3) + '-' + Date.now(),
+    topic, subject, type, duration, notes
+  });
+
+  closeModal();
+  renderSchedule();
+  saveSchedule();
+}
+
+async function saveSchedule() {
+  try {
+    await fetch(`${BACKEND}/api/scheduler/save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ schedule: currentSchedule })
+    });
+  } catch(e) { console.error('Save failed:', e); }
+}
+
+async function loadSchedule() {
+  try {
+    const res = await fetch(`${BACKEND}/api/scheduler/get`);
+    const data = await res.json();
+    if (data.schedule && data.schedule.days && data.schedule.days.length > 0) {
+      currentSchedule = data.schedule;
+      renderSchedule();
+    }
+  } catch(e) { console.error('Load schedule failed:', e); }
+}
+
+function clearSchedule() {
+  if (!confirm('Clear the entire schedule?')) return;
+  currentSchedule = null;
+  document.getElementById('sched-week-grid').classList.add('hidden');
+  document.getElementById('sched-stats').classList.add('hidden');
+  document.getElementById('sched-legend').classList.add('hidden');
+  document.getElementById('sched-week-goal').classList.add('hidden');
+  document.getElementById('sched-empty').classList.remove('hidden');
+  saveSchedule();
+}
+</script>
+</body>
+</html>

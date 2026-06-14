@@ -1,0 +1,8 @@
+backend/.env
+.env
+__pycache__/
+*.pyc
+backend/profile.json
+backend/uploads/
+.DS_Store
+*.log
